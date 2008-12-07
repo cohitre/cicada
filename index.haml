@@ -1,0 +1,23 @@
+!!! Static
+%html
+  %head
+    %title yay
+    %script{:src=>"/jquery.js"}            
+    %script{:src=>"/baconl.js"}
+    %script{:src=>"/plaga.js"}    
+    %style
+      :plain
+        div.plugins-section {
+          margin: 5px 0;
+          border: 1px solid #999;
+        }
+    :javascript
+      function baconl( template ){
+        return jQuery( baconlLite( template ) );
+      }    
+  %body
+
+    #media.plugins-section
+      %h2 media-section
+    #user.plugins-section
+      %h2 user-section
