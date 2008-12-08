@@ -4,20 +4,118 @@
     %title yay
     %script{:src=>"/jquery.js"}            
     %script{:src=>"/baconl.js"}
-    %script{:src=>"/plaga.js"}    
+    %script{:src=>"/cicada.js"}    
+    
     %style
       :plain
-        div.plugins-section {
-          margin: 5px 0;
-          border: 1px solid #999;
+        body , div , h1 , h2, h3 {
+          margin:0;
+          padding:0;
+          font-family: 'trebuchet ms', verdana, arial;
+          font-size: 14px;
+          display: block;
         }
-    :javascript
-      function baconl( template ){
-        return jQuery( baconlLite( template ) );
-      }    
+        h1 {
+          background-color: #556;
+          color: #fff;
+          height: 40px;
+          line-height: 40px;          
+          padding: 0 10px;
+        }
+        .right {
+          float: right;
+        }
+        .clear {
+          clear: both;
+        }
+        div.cicada-component-section.highlighted {
+          border: 3px solid #F0F
+        }
+        div.cicada-component-plugin.highlighted {
+          border: 3px solid #F00
+        }
+        
   %body
+    %h1 Cicada
+    %p 
+      Cicada Sections can be highlighted by clicking 
+      <a href="javascript:$('.cicada-component-section').toggleClass('highlighted');void(0);">here</a>.
+    %p
+      Cicada Plugins can be highlighted by clicking 
+      <a href="javascript:$('.cicada-component-plugin').toggleClass('highlighted');void(0);">here</a>.
 
-    #media.plugins-section
-      %h2 media-section
-    #user.plugins-section
-      %h2 user-section
+    %hr/
+    #current-time.right
+    #alerts.right.clear 
+    #user-names
+      %h2 User names
+
+    :javascript
+      Cicada.registerSection( "user-names" , "#user-names");
+      Cicada.registerSection( "time" , "#current-time" );
+      Cicada.registerSection( "alerts" , "#alerts" );
+
+      Cicada.registerPlugin( "alerts" , function( timeElement ){
+        Cicada.registerObjectListener( "Time" , function( time ) {
+          timeElement.empty();
+          var mins = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
+          var secs = time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
+
+          timeElement.append( time.getHours() , ":" ,  mins , "." , secs );
+        });
+
+      });
+
+      Cicada.registerPlugin( "time" , function( timeElement ){
+        Cicada.registerObjectListener( "Time" , function( time ) {
+          timeElement.empty();
+          var mins = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
+          timeElement.append( time.getHours() , ":" ,  mins );
+        });
+      } );
+
+      Cicada.registerPlugin( "user-names" , function( userCount ) {
+        Cicada.registerObjectListener( "Users" , function( users ) {
+          userCount.empty().append( "No. of users: " , users.length );
+        });
+      });  
+
+      Cicada.registerPlugin( "user-names" , function( el ){
+        var input = $.baconl("%input");
+        var userInputForm = $.baconl("%form")
+          .append( $.baconl("%p").text("Enter a name and press enter. ") )
+          .append( input )
+          .submit( function() {
+            var users = Cicada.retrieve( "Users" );
+            users.push( {
+              name: input.val()
+            });
+            input.val("").focus();
+            Cicada.registerObject( "Users" , users );
+            return false;
+
+          });
+        el.append( userInputForm );
+      });
+
+      Cicada.registerPlugin( "user-names" , function( el ) {
+        var usersList = $.baconl("%ol.users-list");
+        Cicada.registerObjectListener( "Users" , function( users ) {
+          usersList.empty();
+          $.each( users , function( index , object ) {
+            var item = $.baconl("%li").text( object.name );
+            usersList.append( item );
+          } );
+        });
+        el.append( usersList );
+      });
+
+      function updateTime() {
+        Cicada.registerObject("Time" , new Date() );
+      }
+
+      $(window).ready( function(){ 
+        Cicada.initializePlugins() 
+        Cicada.registerObject("Users" , [{name:"Default user"}]);
+        setInterval(updateTime , 1000 );
+      } );
