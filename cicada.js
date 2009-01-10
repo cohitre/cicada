@@ -1,5 +1,5 @@
-var Cicada = (function(){    
-    var self = {};
+function Cicada(){    
+    var self = this;
     
     var objects = {};
     var sections = {};
@@ -63,5 +63,5 @@ var Cicada = (function(){
     }
     
     return self;
-})();
+}
 

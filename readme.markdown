@@ -3,22 +3,23 @@
 Cicada is a system for populating a page with multiple javascript plugins 
 
 ## Example
-
+    var c = new Cicada();
+    
     // Register the page sections:
-    Cicada.registerSection( "page-section" , "#media");
-    Cicada.registerSection( "user-area" , "#user");    
+    c.registerSection( "page-section" , "#media");
+    c.registerSection( "user-area" , "#user");    
 
     // Register the plugins
-    Cicada.registerPlugin( "page-section" , function( element ) {
+    c.registerPlugin( "page-section" , function( element ) {
         element.addClass("unknown").text( "User unknown" );
-        Cicada.registerObjectListener( "User" , function( user ){
+        c.registerObjectListener( "User" , function( user ){
             element.removeClass("unknown");
             element.text( user.name );
         });
     } );
 
     // Initialize the registered plugins:
-    Cicada.initializePlugins();
+    c.initializePlugins();
     
     // Register the models:    
-    Cicada.registerObject( "User" , {name:"Default user"} );
+    c.registerObject( "User" , {name:"Default user"} );

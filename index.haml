@@ -51,12 +51,13 @@
       %h2 User names
 
     :javascript
-      Cicada.registerSection( "user-names" , "#user-names");
-      Cicada.registerSection( "time" , "#current-time" );
-      Cicada.registerSection( "alerts" , "#alerts" );
+      var c = new Cicada();
+      c.registerSection( "user-names" , "#user-names");
+      c.registerSection( "time" , "#current-time" );
+      c.registerSection( "alerts" , "#alerts" );
 
-      Cicada.registerPlugin( "alerts" , function( timeElement ){
-        Cicada.registerObjectListener( "Time" , function( time ) {
+      c.registerPlugin( "alerts" , function( timeElement ){
+        c.registerObjectListener( "Time" , function( time ) {
           timeElement.empty();
           var mins = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
           var secs = time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
@@ -66,41 +67,41 @@
 
       });
 
-      Cicada.registerPlugin( "time" , function( timeElement ){
-        Cicada.registerObjectListener( "Time" , function( time ) {
+      c.registerPlugin( "time" , function( timeElement ){
+        c.registerObjectListener( "Time" , function( time ) {
           timeElement.empty();
           var mins = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
           timeElement.append( time.getHours() , ":" ,  mins );
         });
       } );
 
-      Cicada.registerPlugin( "user-names" , function( userCount ) {
-        Cicada.registerObjectListener( "Users" , function( users ) {
+      c.registerPlugin( "user-names" , function( userCount ) {
+        c.registerObjectListener( "Users" , function( users ) {
           userCount.empty().append( "No. of users: " , users.length );
         });
       });  
 
-      Cicada.registerPlugin( "user-names" , function( el ){
+      c.registerPlugin( "user-names" , function( el ){
         var input = $.baconl("%input");
         var userInputForm = $.baconl("%form")
           .append( $.baconl("%p").text("Enter a name and press enter. ") )
           .append( input )
           .submit( function() {
-            var users = Cicada.retrieve( "Users" );
+            var users = c.retrieve( "Users" );
             users.push( {
               name: input.val()
             });
             input.val("").focus();
-            Cicada.registerObject( "Users" , users );
+            c.registerObject( "Users" , users );
             return false;
 
           });
         el.append( userInputForm );
       });
 
-      Cicada.registerPlugin( "user-names" , function( el ) {
+      c.registerPlugin( "user-names" , function( el ) {
         var usersList = $.baconl("%ol.users-list");
-        Cicada.registerObjectListener( "Users" , function( users ) {
+        c.registerObjectListener( "Users" , function( users ) {
           usersList.empty();
           $.each( users , function( index , object ) {
             var item = $.baconl("%li").text( object.name );
@@ -111,11 +112,11 @@
       });
 
       function updateTime() {
-        Cicada.registerObject("Time" , new Date() );
+        c.registerObject("Time" , new Date() );
       }
 
       $(window).ready( function(){ 
-        Cicada.initializePlugins() 
-        Cicada.registerObject("Users" , [{name:"Default user"}]);
+        c.initializePlugins() 
+        c.registerObject("Users" , [{name:"Default user"}]);
         setInterval(updateTime , 1000 );
       } );
